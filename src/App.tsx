@@ -9,33 +9,27 @@ import { gerarOcorrenciasRecorrentesPendentes } from './features/lancamento/gera
 import { TelaHome } from './features/home/TelaHome'
 import type { FiltroHome } from './features/home/TelaHome'
 import { TelaTotais } from './features/totais/TelaTotais'
-import { TelaMenu } from './features/menu/TelaMenu'
 import { TelaEconomias } from './features/economias/TelaEconomias'
 import { ModalFechamentoMes } from './features/economias/ModalFechamentoMes'
 import { useFechamentoPendente } from './features/economias/useFechamentoPendente'
 import { TelaCartoes } from './features/cartoes/TelaCartoes'
+import { AppShell } from './components/layout/AppShell'
 import { hojeISO } from './lib/dataISO'
 import type { TipoMovimento } from './types/domain'
+import type { Aba } from './types/navegacao'
 import './App.css'
 
-type Aba = 'home' | 'categorias' | 'totais' | 'lancamento' | 'menu' | 'economias' | 'cartoes'
 // De onde veio o pedido pra abrir Categorias já no modo de edição do
-// previsto: do Menu (edição avulsa) ou do atalho "+ nova categoria" do
-// Registro (edição + volta pro Registro com a categoria criada
-// selecionada). null = navegação normal pela aba, abre em modo de
-// visualização.
-type OrigemEdicaoCategorias = 'menu' | 'lancamento' | null
-
-const ABAS: { id: Aba; rotulo: string }[] = [
-  { id: 'home', rotulo: 'Home' },
-  { id: 'categorias', rotulo: 'Categorias' },
-  { id: 'totais', rotulo: 'Totais' },
-  { id: 'lancamento', rotulo: '+' },
-  { id: 'menu', rotulo: 'Menu' },
-]
+// previsto: hoje só existe o atalho "+ nova categoria" do Registro (edição +
+// volta pro Registro com a categoria criada selecionada). null = navegação
+// normal pela aba, abre em modo de visualização.
+type OrigemEdicaoCategorias = 'lancamento' | null
 
 function App() {
   const [abaAtiva, setAbaAtiva] = useState<Aba>('home')
+  // Aba ativa antes de abrir Cartões pelo menu do Header — usada pra "voltar"
+  // pro lugar certo, já que Cartões não é um destino da navegação primária.
+  const [abaAntesDoCartoes, setAbaAntesDoCartoes] = useState<Aba>('home')
   const { session, carregando: carregandoSessao } = useSession()
   const {
     usuarios,
@@ -85,9 +79,14 @@ function App() {
     setAbaAtiva('lancamento')
   }
 
-  // Navegação manual pela barra inferior sempre volta pro modo de
-  // visualização normal — só entra em modo de edição via os atalhos
-  // explícitos (Menu, ou "+ nova categoria" do Registro).
+  function abrirCartoes() {
+    setAbaAntesDoCartoes(abaAtiva)
+    setAbaAtiva('cartoes')
+  }
+
+  // Navegação manual pela nav primária sempre volta pro modo de visualização
+  // normal — só entra em modo de edição via o atalho "+ nova categoria" do
+  // Registro.
   function irParaAba(aba: Aba) {
     setOrigemEdicaoCategorias(null)
     setAbaAtiva(aba)
@@ -109,7 +108,14 @@ function App() {
 
   return (
     <>
-      <main className="conteudo">
+      <AppShell
+        abaAtiva={abaAtiva}
+        onNavegar={irParaAba}
+        perfilNome={perfilAtivo.nome}
+        onNovoLancamento={abrirNovoLancamento}
+        onAbrirCartoes={abrirCartoes}
+        onTrocarPerfil={limparPerfil}
+      >
         {abaAtiva === 'home' && <TelaHome key={versaoHome} onDiaClicado={handleDiaClicadoNaHome} />}
         {abaAtiva === 'categorias' && (
           <TelaCategorias
@@ -152,23 +158,10 @@ function App() {
           </div>
         )}
 
-        {abaAtiva === 'menu' && (
-          <TelaMenu
-            perfilAtivo={perfilAtivo}
-            onTrocarPerfil={limparPerfil}
-            onEditarPrevisao={() => {
-              setOrigemEdicaoCategorias('menu')
-              setAbaAtiva('categorias')
-            }}
-            onAbrirEconomias={() => setAbaAtiva('economias')}
-            onAbrirCartoes={() => setAbaAtiva('cartoes')}
-          />
-        )}
-
         {abaAtiva === 'economias' && <TelaEconomias />}
 
-        {abaAtiva === 'cartoes' && <TelaCartoes onVoltar={() => setAbaAtiva('menu')} />}
-      </main>
+        {abaAtiva === 'cartoes' && <TelaCartoes onVoltar={() => setAbaAtiva(abaAntesDoCartoes)} />}
+      </AppShell>
 
       {fechamento.pendente && (
         <ModalFechamentoMes
@@ -177,19 +170,6 @@ function App() {
           onRecusar={fechamento.recusar}
         />
       )}
-
-      <nav className="nav-inferior">
-        {ABAS.map((aba) => (
-          <button
-            key={aba.id}
-            type="button"
-            className={`nav-inferior__item ${abaAtiva === aba.id ? 'nav-inferior__item--ativo' : ''} ${aba.id === 'lancamento' ? 'nav-inferior__item--central' : ''}`}
-            onClick={() => (aba.id === 'lancamento' ? abrirNovoLancamento() : irParaAba(aba.id))}
-          >
-            {aba.rotulo}
-          </button>
-        ))}
-      </nav>
     </>
   )
 }

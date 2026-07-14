@@ -1,50 +1,3 @@
-.conteudo {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  padding-bottom: 96px;
-}
-
-.nav-inferior {
-  position: sticky;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  background: var(--nav-bg);
-  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
-}
-
-.nav-inferior__item {
-  appearance: none;
-  border: none;
-  background: none;
-  color: #b7b8bd;
-  font: inherit;
-  font-size: 13px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.nav-inferior__item--ativo {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.nav-inferior__item--central {
-  background: var(--accent);
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .tela-categorias__resumo {
   display: flex;
   flex-direction: column;
@@ -243,24 +196,6 @@
   font-weight: 600;
   padding: 16px;
   border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-}
-
-.tela-menu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 24px;
-}
-
-.tela-menu button {
-  font: inherit;
-  padding: 12px 20px;
-  border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
@@ -752,7 +687,9 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 10;
+  /* Acima do chrome fixo novo (Header/Sidebar/BottomNav/Fab, z-index 30-50) —
+     este modal é bloqueante e precisa ficar por cima de tudo. */
+  z-index: 60;
 }
 
 .modal-folha {
