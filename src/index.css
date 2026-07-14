@@ -1,0 +1,58 @@
+:root {
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --text: #16171d;
+  --text-muted: #6b6f76;
+  --border: #e5e4e7;
+  --nav-bg: #14151a;
+  --accent: #e8622f;
+  --verde: #8fd19e;
+  --verde-texto: #1f5c33;
+  --amarelo: #f2d98a;
+  --amarelo-texto: #7a5b00;
+  --vermelho: #f2a1a1;
+  --vermelho-texto: #7a1f1f;
+
+  --saldo-verde-escuro: #5cb579;
+  --saldo-verde-escuro-texto: #1a4d2b;
+  --saldo-verde-claro: #a8dfb4;
+  --saldo-verde-claro-texto: #235c34;
+  --saldo-amarelo: #f2d98a;
+  --saldo-amarelo-texto: #7a5b00;
+  --saldo-laranja: #f0b673;
+  --saldo-laranja-texto: #7a4200;
+  --saldo-vermelho: #f2a1a1;
+  --saldo-vermelho-texto: #7a1f1f;
+
+  --icone-entrada: #3f9d5c;
+  --icone-saida: #d9622f;
+  --icone-diario: #d6266f;
+  --icone-cartao: #5b3fd6;
+
+  font: 16px/1.4 system-ui, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100svh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
