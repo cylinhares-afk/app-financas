@@ -240,7 +240,7 @@ function ItemLancamento({ item, categorias, onAlterado }: ItemLancamentoProps) {
           <span>{item.rotulo}</span>
           {item.meioPagamento && (
             <span className="tela-detalhe-dia__meio">
-              {item.meioPagamento === 'cartao' ? 'Cartão' : 'Dinheiro'}
+              {item.meioPagamento === 'cartao' ? (item.cartaoNome ?? 'Cartão') : 'Dinheiro'}
             </span>
           )}
           {item.descricao && <span className="tela-detalhe-dia__descricao">{item.descricao}</span>}

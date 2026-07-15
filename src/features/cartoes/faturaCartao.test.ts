@@ -32,6 +32,12 @@ describe('mesVencimentoDoGasto', () => {
   it('atravessa a virada de ano corretamente', () => {
     expect(mesVencimentoDoGasto(20, 27, '2026-12-25')).toEqual({ ano: 2027, mes: 1 })
   })
+
+  it('cartão tipo "Amazon" (fecha dia 20, vence dia 1): compra depois do fechamento vence 2 meses depois da compra', () => {
+    // compra 26/06 é depois do fechamento (dia 20) -> cai na fatura que fecha em 20/07;
+    // como o vencimento (dia 1) é antes do fechamento (dia 20), essa fatura só vence em agosto.
+    expect(mesVencimentoDoGasto(20, 1, '2026-06-26')).toEqual({ ano: 2026, mes: 8 })
+  })
 })
 
 describe('filtrarGastosCartaoVencendoNoMes', () => {

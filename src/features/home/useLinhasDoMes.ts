@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
+  fetchCartoes,
   fetchCategorias,
   fetchComprasParceladas,
   fetchEntradasDoMes,
@@ -14,12 +15,13 @@ import type { LinhaDia } from './linhasDoMes'
 import { getDiasNoMes } from '../budget/calculations'
 import { categoriasComPrevistoEfetivo } from '../budget/previsaoEfetiva'
 import { gerarOcorrenciasRecorrentesPendentes } from '../lancamento/gerarOcorrenciasRecorrentes'
-import type { Categoria, CompraParcelada } from '../../types/domain'
+import type { Cartao, Categoria, CompraParcelada } from '../../types/domain'
 
 export function useLinhasDoMes(ano: number, mes: number) {
   const [linhas, setLinhas] = useState<LinhaDia[]>([])
   const [categorias, setCategorias] = useState<Categoria[]>([])
   const [comprasParceladas, setComprasParceladas] = useState<CompraParcelada[]>([])
+  const [cartoes, setCartoes] = useState<Cartao[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -41,13 +43,14 @@ export function useLinhasDoMes(ano: number, mes: number) {
       return
     }
 
-    const [categoriasResp, comprasParceladasResp, primeiraDataResp, fechamentosResp, previsoesResp] =
+    const [categoriasResp, comprasParceladasResp, primeiraDataResp, fechamentosResp, previsoesResp, cartoesResp] =
       await Promise.all([
         fetchCategorias(),
         fetchComprasParceladas(),
         fetchPrimeiraDataComMovimento(),
         fetchFechamentosConfirmados(),
         fetchTodasPrevisoes(),
+        fetchCartoes(),
       ])
 
     const primeiroErro =
@@ -55,7 +58,8 @@ export function useLinhasDoMes(ano: number, mes: number) {
       comprasParceladasResp.erro ??
       primeiraDataResp.erro ??
       fechamentosResp.erro ??
-      previsoesResp.erro
+      previsoesResp.erro ??
+      cartoesResp.erro
     if (primeiroErro) {
       setErro(primeiroErro)
       setCarregando(false)
@@ -124,6 +128,7 @@ export function useLinhasDoMes(ano: number, mes: number) {
     )
     setCategorias(categoriasResp.dados)
     setComprasParceladas(comprasParceladasResp.dados)
+    setCartoes(cartoesResp.dados)
     setCarregando(false)
   }, [ano, mes])
 
@@ -131,5 +136,5 @@ export function useLinhasDoMes(ano: number, mes: number) {
     carregar()
   }, [carregar])
 
-  return { linhas, categorias, comprasParceladas, carregando, erro, recarregar: carregar }
+  return { linhas, categorias, comprasParceladas, cartoes, carregando, erro, recarregar: carregar }
 }

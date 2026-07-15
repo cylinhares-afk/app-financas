@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { itensDoDia } from './itensDoDia'
 import { calcularLinhasDoMes } from './linhasDoMes'
-import type { Categoria, CompraParcelada, Entrada, Gasto } from '../../types/domain'
+import type { Cartao, Categoria, CompraParcelada, Entrada, Gasto } from '../../types/domain'
 
 const categorias: Categoria[] = [{ id: 'mercado', nome: 'Mercado', ativa: true }]
 
@@ -162,6 +162,50 @@ describe('itensDoDia', () => {
     const itens = itensDoDia(linha, 'saidas', categorias, comprasParceladas)
 
     expect(itens[0].parcela).toEqual({ numero: 2, total: 4 })
+  })
+
+  it('resolve o nome do cartão a partir do cartaoId do gasto', () => {
+    const cartoes: Cartao[] = [{ id: 'amazon', nome: 'Amazon', diaFechamento: 20, diaVencimento: 1 }]
+    const linha = linhaComMovimentos(
+      [],
+      [
+        {
+          id: 'g1',
+          categoriaId: 'mercado',
+          usuarioId: 'u',
+          valor: 100,
+          data: '2026-07-04',
+          meioPagamento: 'cartao',
+          cartaoId: 'amazon',
+        },
+      ],
+    )
+
+    const itens = itensDoDia(linha, 'saidas', categorias, [], cartoes)
+
+    expect(itens[0].cartaoNome).toBe('Amazon')
+  })
+
+  it('cartaoNome fica undefined quando o gasto não tem cartaoId, ou o cartão não existe mais', () => {
+    const linha = linhaComMovimentos(
+      [],
+      [
+        { id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'cartao' },
+        {
+          id: 'g2',
+          categoriaId: 'mercado',
+          usuarioId: 'u',
+          valor: 100,
+          data: '2026-07-04',
+          meioPagamento: 'cartao',
+          cartaoId: 'excluido',
+        },
+      ],
+    )
+
+    const itens = itensDoDia(linha, 'saidas', categorias, [], [])
+
+    expect(itens.map((i) => i.cartaoNome)).toEqual([undefined, undefined])
   })
 
   it('usa "Categoria removida" quando a categoria do gasto não existe mais na lista', () => {

@@ -159,7 +159,7 @@ export function TelaHome({ onDiaClicado }: TelaHomeProps) {
   const [diaSelecionado, setDiaSelecionado] = useState<number | null>(null)
   const [mesVisualizado, setMesVisualizado] = useState({ ano: ANO_ATUAL, mes: MES_ATUAL })
 
-  const { linhas, categorias, comprasParceladas, carregando, erro, recarregar } = useLinhasDoMes(
+  const { linhas, categorias, comprasParceladas, cartoes, carregando, erro, recarregar } = useLinhasDoMes(
     mesVisualizado.ano,
     mesVisualizado.mes,
   )
@@ -188,7 +188,7 @@ export function TelaHome({ onDiaClicado }: TelaHomeProps) {
   const linhaSelecionada = linhas.find((linha) => linha.dia === diaSelecionado)
 
   if (diaSelecionado !== null && linhaSelecionada) {
-    const itens = itensDoDia(linhaSelecionada, filtro, categorias, comprasParceladas)
+    const itens = itensDoDia(linhaSelecionada, filtro, categorias, comprasParceladas, cartoes)
     return (
       <TelaDetalheDia
         dia={diaSelecionado}
@@ -260,7 +260,7 @@ export function TelaHome({ onDiaClicado }: TelaHomeProps) {
           </TableHeader>
           <TableBody>
             {linhas.map((linha) => {
-              const temItens = itensDoDia(linha, filtro, categorias, comprasParceladas).length > 0
+              const temItens = itensDoDia(linha, filtro, categorias, comprasParceladas, cartoes).length > 0
               const dataISOdoDia = formatarDataISO(mesVisualizado.ano, mesVisualizado.mes, linha.dia)
               const ehHoje =
                 linha.dia === DIA_ATUAL && mesVisualizado.ano === ANO_ATUAL && mesVisualizado.mes === MES_ATUAL

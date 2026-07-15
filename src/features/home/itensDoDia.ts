@@ -1,4 +1,4 @@
-import type { Categoria, CompraParcelada, MeioPagamento } from '../../types/domain'
+import type { Cartao, Categoria, CompraParcelada, MeioPagamento } from '../../types/domain'
 import type { FiltroHome, LinhaDia } from './linhasDoMes'
 
 /**
@@ -14,6 +14,7 @@ export interface ItemMovimento {
   rotulo: string
   descricao?: string // nota livre do lançamento, quando existir (só faz sentido pra saída)
   meioPagamento?: MeioPagamento // só faz sentido pra saída
+  cartaoNome?: string // só quando meioPagamento === 'cartao' e o cartão ainda existe
   categoriaId?: string // só faz sentido pra saída — usado pra editar
   parcela?: { numero: number; total: number }
   compraParceladaId?: string // presente quando o gasto vem de uma compra parcelada (excluir por escopo)
@@ -26,6 +27,7 @@ export function itensDoDia(
   filtro: FiltroHome,
   categorias: Categoria[],
   comprasParceladas: CompraParcelada[],
+  cartoes: Cartao[] = [],
 ): ItemMovimento[] {
   const itensEntrada: ItemMovimento[] = linha.itensEntradas.map((entrada) => ({
     id: entrada.id,
@@ -55,6 +57,7 @@ export function itensDoDia(
       rotulo: categorias.find((categoria) => categoria.id === gasto.categoriaId)?.nome ?? 'Categoria removida',
       descricao: gasto.descricao,
       meioPagamento: gasto.meioPagamento,
+      cartaoNome: gasto.cartaoId ? cartoes.find((cartao) => cartao.id === gasto.cartaoId)?.nome : undefined,
       categoriaId: gasto.categoriaId,
       parcela: gasto.numeroParcela
         ? { numero: gasto.numeroParcela, total: compra?.numeroParcelas ?? gasto.numeroParcela }
