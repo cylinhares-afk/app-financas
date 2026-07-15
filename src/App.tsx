@@ -148,7 +148,7 @@ function App() {
               tipoMovimentoInicial={tipoMovimentoLancamento}
               dataInicial={dataLancamentoInicial}
               categoriaParaSelecionar={categoriaParaSelecionar}
-              onGastoRegistrado={() => irParaAba('categorias')}
+              onGastoRegistrado={() => irParaAba('home')}
               onEditarPrevisao={() => {
                 setOrigemEdicaoCategorias('lancamento')
                 setCategoriaParaSelecionar(null)
