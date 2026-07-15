@@ -75,6 +75,7 @@ function FormularioEdicaoItem({ item, categorias, salvando, onSalvar, onCancelar
           type="number"
           inputMode="decimal"
           min={0}
+          step={0.01}
           value={valor}
           onChange={(evento) => setValor(semNegativo(evento.target.value))}
         />

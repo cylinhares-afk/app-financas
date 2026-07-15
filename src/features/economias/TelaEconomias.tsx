@@ -88,6 +88,7 @@ export function TelaEconomias() {
             <input
               type="number"
               inputMode="decimal"
+              step={0.01}
               autoFocus
               value={valorEdicao}
               onChange={(evento) => setValorEdicao(evento.target.value)}

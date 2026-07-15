@@ -328,6 +328,7 @@ export function TelaLancamento({
         type="number"
         inputMode="decimal"
         min={0}
+        step={0.01}
         placeholder="0,00"
         value={valor}
         onChange={(evento) => setValor(semNegativo(evento.target.value))}
