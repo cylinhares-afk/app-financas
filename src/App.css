@@ -515,8 +515,6 @@
 }
 
 .tela-home__lista {
-  display: flex;
-  flex-direction: column;
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
@@ -524,19 +522,8 @@
 }
 
 .tela-home__linha {
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
-  padding: 8px 12px;
   border-bottom: 1px solid var(--border);
-  width: 100%;
-  font: inherit;
   color: var(--text);
-  text-align: left;
-  background: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
   cursor: pointer;
   /* Sem isso, "segurar" no celular vira seleção de texto/menu do sistema (iOS)
      ou briga com o gesto de rolar a lista, em vez de disparar nosso long-press. */
@@ -555,13 +542,59 @@
   border-bottom: none;
 }
 
+.tela-home__linha:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* Célula: onde migrou o padding que existia em .tela-home__linha — não
+   funciona em <tr>, só em <td>/<th>. Sem display:flex aqui de propósito:
+   setar display:flex direto num <td> tira ele do layout de tabela (deixa de
+   se comportar como table-cell), quebrando o alinhamento em colunas — quem
+   precisa de flex já tem isso no próprio filho (.tela-home__movimentos,
+   .tela-home__saldo). */
+.tela-home__celula {
+  padding: 8px 12px;
+  vertical-align: middle;
+  /* O TableCell do shadcn já vem com whitespace-nowrap (classe Tailwind,
+     "layered") — sem essa sobrescrita (CSS deste arquivo não é layered,
+     então vence por padrão), valores longos no resumo do filtro "todas"
+     ficam numa linha só e estouram a largura fixa da coluna em vez de
+     quebrar dentro dela. */
+  white-space: normal;
+}
+
+.tela-home__celula-dia {
+  /* Largura fixa (não "width:1%") de propósito: a tabela usa table-layout:
+     fixed (ver .tela-home__lista table), então a largura das colunas não
+     depende mais do conteúdo — é o que permite a coluna do meio
+     (movimentação) ter largura previsível e QUEBRAR LINHA quando o dia tem
+     muitos tipos de movimento, em vez do dia mais cheio esticar a largura
+     da tabela inteira (e com ela, todas as outras linhas). */
+  width: 58px;
+  border-left: 6px solid transparent;
+}
+
+.tela-home__celula--saldo {
+  width: 120px;
+}
+
+/* table-layout:fixed: ver comentário em .tela-home__celula-dia. */
+.tela-home__lista table {
+  table-layout: fixed;
+}
+
+.tela-home__celula-dia--verde-escuro { border-left-color: var(--saldo-verde-escuro); }
+.tela-home__celula-dia--verde-claro { border-left-color: var(--saldo-verde-claro); }
+.tela-home__celula-dia--amarelo { border-left-color: var(--saldo-amarelo); }
+.tela-home__celula-dia--laranja { border-left-color: var(--saldo-laranja); }
+.tela-home__celula-dia--vermelho { border-left-color: var(--saldo-vermelho); }
+
 .tela-home__dia {
   width: 28px;
-  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: center;
   height: 28px;
   border-radius: 8px;
   font-weight: 600;
@@ -586,46 +619,51 @@
 .tela-home__movimento {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  /* flex-start (não flex-end) de propósito: com flex-end, o par ícone+valor
+     hugava a borda direita da célula, então o comprimento do valor (mais ou
+     menos dígitos) deslocava a posição X do ícone de linha pra linha — dava
+     um efeito serrilhado na coluna. Ancorado à esquerda, o ícone fica sempre
+     na mesma posição, e é o valor que cresce/encolhe depois dele. */
+  justify-content: flex-start;
   gap: 8px;
   font-size: 14px;
   font-weight: 600;
+  border-left: 3px solid transparent;
+  padding-left: 8px;
 }
+
+.tela-home__icone {
+  width: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.tela-home__movimento--entrada { border-left-color: var(--icone-entrada); }
+.tela-home__movimento--entrada .tela-home__icone { color: var(--icone-entrada); }
+
+.tela-home__movimento--saida { border-left-color: var(--icone-saida); }
+.tela-home__movimento--saida .tela-home__icone { color: var(--icone-saida); }
+
+.tela-home__movimento--diario { border-left-color: var(--icone-diario); }
+.tela-home__movimento--diario .tela-home__icone { color: var(--icone-diario); }
+
+.tela-home__movimento--cartao { border-left-color: var(--icone-cartao); }
+.tela-home__movimento--cartao .tela-home__icone { color: var(--icone-cartao); }
 
 .tela-home__movimento--vazio {
   color: var(--text-muted);
   font-weight: 400;
   opacity: 0.6;
+  border-left-color: var(--border);
 }
 
-.tela-home__icone {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  background: var(--text-muted);
-}
-
-.tela-home__movimento--entrada .tela-home__icone {
-  background: var(--icone-entrada);
-}
-
-.tela-home__movimento--saida .tela-home__icone {
-  background: var(--icone-saida);
-}
-
-.tela-home__movimento--diario .tela-home__icone {
-  background: var(--icone-diario);
-}
-
-.tela-home__movimento--cartao .tela-home__icone {
-  background: var(--icone-cartao);
+.tela-home__movimento--vazio .tela-home__icone {
+  color: var(--text-muted);
 }
 
 .tela-home__selo-parcela {
@@ -637,47 +675,68 @@
   padding: 2px 6px;
 }
 
-.tela-home__movimento--vazio .tela-home__icone {
-  background: var(--border);
+/* Resumo compacto do filtro "todas" — os 4 tipos SEMPRE ocupam um slot
+   (grid, não flex): entrada/saída/diário/cartão, nessa ordem, cada um numa
+   coluna de largura fixa. Isso resolve dois problemas de uma vez: (1) o
+   ícone de cada tipo cai sempre na mesma posição X entre os dias — grid
+   não deixa o conteúdo de uma coluna empurrar as outras, ao contrário de
+   flex; (2) o ícone continua aparecendo (esmaecido) mesmo quando aquele
+   tipo não teve movimento no dia — antes ele só aparecia quando havia
+   valor, então um mês inteiro sem nenhum lançamento ficava sem nenhum
+   ícone, o que lia como "quebrado". O detalhe completo por lançamento já
+   existe em TelaDetalheDia. */
+.tela-home__indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  column-gap: 4px;
+  min-width: 0;
+}
+
+.tela-home__indicador {
+  /* Empilhado (ícone em cima, valor embaixo), não lado a lado: cada slot só
+     tem ~35-45px de largura (a linha inteira precisa caber 4 deles), e um
+     valor tipo "1.500,50" não tem onde quebrar linha (é uma palavra só,
+     sem espaço) — lado a lado com o ícone ele vazava pra coluna vizinha.
+     Empilhado, o valor usa a largura do slot inteira só pra ele. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  overflow-wrap: break-word;
+}
+
+.tela-home__indicador-icone {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tela-home__indicador--entrada .tela-home__indicador-icone { color: var(--icone-entrada); }
+.tela-home__indicador--saida .tela-home__indicador-icone { color: var(--icone-saida); }
+.tela-home__indicador--diario .tela-home__indicador-icone { color: var(--icone-diario); }
+.tela-home__indicador--cartao .tela-home__indicador-icone { color: var(--icone-cartao); }
+
+.tela-home__indicador--vazio .tela-home__indicador-icone {
   color: var(--text-muted);
+  opacity: 0.4;
 }
 
 .tela-home__saldo {
   flex-shrink: 0;
-  width: 120px;
+  min-width: 100px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   text-align: right;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
-}
-
-.tela-home__saldo--verde-escuro {
-  background: var(--saldo-verde-escuro);
-  color: var(--saldo-verde-escuro-texto);
-}
-
-.tela-home__saldo--verde-claro {
-  background: var(--saldo-verde-claro);
-  color: var(--saldo-verde-claro-texto);
-}
-
-.tela-home__saldo--amarelo {
-  background: var(--saldo-amarelo);
-  color: var(--saldo-amarelo-texto);
-}
-
-.tela-home__saldo--laranja {
-  background: var(--saldo-laranja);
-  color: var(--saldo-laranja-texto);
-}
-
-.tela-home__saldo--vermelho {
-  background: var(--saldo-vermelho);
-  color: var(--saldo-vermelho-texto);
+  color: var(--text);
 }
 
 .modal-overlay {
