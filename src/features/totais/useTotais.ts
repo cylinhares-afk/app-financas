@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchCategorias, fetchCartoes, fetchEntradasDoMes, fetchGastosDoMes, fetchTodasPrevisoes } from '../../lib/queries'
 import {
   calcularOrcamentoDiarioTotal,
+  calcularResumoCategorias,
   getDiasNoMes,
   somarGastosCategoriaNoMes,
 } from '../budget/calculations'
@@ -73,7 +74,8 @@ export function useTotais(ano: number, mes: number) {
         previsto: previstoPorCategoria.find((c) => c.categoriaId === categoria.id)?.previsto ?? 0,
         gastoNoMes: somarGastosCategoriaNoMes(gastosResp.dados, categoria.id, ano, mes),
       }))
-      const { totalDiario } = calcularOrcamentoDiarioTotal(categoriasComOrcamento, diaDeReferencia, diasNoMes)
+      const { porCategoria } = calcularOrcamentoDiarioTotal(categoriasComOrcamento, diaDeReferencia, diasNoMes)
+      const { totalPrevisto, diarioMedio } = calcularResumoCategorias(porCategoria, diaDeReferencia)
 
       setDados(
         calcularTotais({
@@ -82,7 +84,9 @@ export function useTotais(ano: number, mes: number) {
           saidasTotalMes,
           cartaoMesAtual,
           cartaoVencendoNoMes,
-          diarioHoje: totalDiario,
+          totalPrevisto,
+          gastoMedioDia: diarioMedio,
+          diasNoMes,
         }),
       )
       setCarregando(false)

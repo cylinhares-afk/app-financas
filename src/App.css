@@ -837,6 +837,49 @@
   color: var(--icone-saida);
 }
 
+.tela-totais__frase {
+  font-size: 15px;
+  color: var(--text);
+  margin: 2px 0;
+}
+
+.tela-totais__frase strong {
+  font-weight: 700;
+}
+
+.tela-totais__frase-legenda {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.tela-totais__frase-detalhes {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.tela-totais__frase-detalhes > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.tela-totais__frase-detalhes span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tela-totais__frase-detalhes strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
 .tela-totais__movimentacoes {
   display: flex;
   flex-direction: column;

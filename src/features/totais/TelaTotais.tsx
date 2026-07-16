@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTotais } from './useTotais'
+import { useEconomias } from '../economias/useEconomias'
 import { formatMoeda } from '../../lib/formatMoeda'
 import { statusMesVisualizado } from '../../lib/navegacaoMes'
 import type { MesAno } from '../../lib/navegacaoMes'
@@ -23,8 +24,6 @@ const EXPLICACAO_SOBRA =
   'É quanto dinheiro sobrou (ou faltou) de verdade neste mês. Conta o que entrou, menos o que você gastou em dinheiro/PIX, menos a fatura do cartão que venceu agora (referente a compras de meses passados — compras no cartão feitas neste mês só entram na conta no mês em que a fatura vencer).'
 const EXPLICACAO_CUSTO_DE_VIDA =
   'É quanto você gastou de verdade neste mês, sem comparar com o que entrou. Conta o que saiu em dinheiro/PIX, mais a fatura do cartão que venceu agora.'
-const EXPLICACAO_DIARIO =
-  'Compara o que você planejou gastar por dia em cada categoria com o quanto realmente gastou, somando os dias já passados do mês. Não é dinheiro que saiu de verdade — é só um termômetro pra saber se você está no ritmo do que planejou, ou já passou dele.'
 
 /** Ícone "ⓘ" ao lado do rótulo de cada linha — abre a explicação completa
  * ao tocar (clique/tap, via Popover) ou passar o mouse (hover, desktop). */
@@ -55,6 +54,13 @@ interface TelaTotaisProps {
 
 export function TelaTotais({ mesVisualizado }: TelaTotaisProps) {
   const { dados, carregando, erro } = useTotais(mesVisualizado.ano, mesVisualizado.mes)
+  // Só é lido quando sobraProjetada < 0 (ver seção Ritmo de economia) — mesmo
+  // saldo acumulado (sem filtro de mês) já exibido na tela Economias.
+  const {
+    saldoTotal: saldoEconomias,
+    carregando: carregandoEconomias,
+    erro: erroEconomias,
+  } = useEconomias()
 
   if (carregando) return <p className="tela-categorias__aviso">Carregando…</p>
 
@@ -64,7 +70,10 @@ export function TelaTotais({ mesVisualizado }: TelaTotaisProps) {
 
   const performancePositiva = dados.performance >= 0
   const custoDentroDaRenda = dados.custoDeVida <= dados.entradasMes
-  const diarioAbaixoDoPlanejado = dados.diarioHoje >= 0
+  const projecaoAcimaDoPrevisto = dados.diferencaProjecao > 0
+  const vaiSobrar = dados.sobraProjetada >= 0
+  const faltante = -dados.sobraProjetada
+  const diferencaReserva = saldoEconomias - faltante
   const rotuloSobra = ROTULO_SOBRA[statusMesVisualizado(mesVisualizado, { ano: ANO_ATUAL, mes: MES_ATUAL })]
 
   return (
@@ -103,20 +112,62 @@ export function TelaTotais({ mesVisualizado }: TelaTotaisProps) {
         <strong>{formatMoeda(dados.custoDeVida)}</strong>
       </div>
 
-      <h3 className="tela-totais__secao">Ritmo diário</h3>
+      <h3 className="tela-totais__secao">Projeção do mês</h3>
 
-      <div className="tela-totais__linha">
-        <div className="tela-totais__rotulos">
-          <span className="tela-totais__rotulo">
-            Diário
-            <InfoLinha texto={EXPLICACAO_DIARIO} />
-          </span>
-          <span className="tela-totais__legenda">
-            {diarioAbaixoDoPlanejado ? 'abaixo do planejado' : 'acima do planejado'}
-          </span>
+      <p className="tela-totais__frase">
+        No ritmo atual, o mês deve fechar em <strong>{formatMoeda(dados.gastoProjetado)}</strong>
+      </p>
+      <p className="tela-totais__frase-legenda">
+        {formatMoeda(Math.abs(dados.diferencaProjecao))} {projecaoAcimaDoPrevisto ? 'acima' : 'abaixo'} do previsto (
+        {formatMoeda(dados.totalPrevisto)})
+      </p>
+      <div className="tela-totais__frase-detalhes">
+        <div>
+          <span>Previsto/dia</span>
+          <strong>{formatMoeda(dados.previstoDia)}</strong>
         </div>
-        <strong>{formatMoeda(dados.diarioHoje)}</strong>
+        <div>
+          <span>Gasto médio/dia</span>
+          <strong>{formatMoeda(dados.gastoMedioDia)}</strong>
+        </div>
       </div>
+
+      <h3 className="tela-totais__secao">Ritmo de economia</h3>
+
+      {vaiSobrar ? (
+        <p className="tela-totais__frase">
+          Nesse ritmo, deve sobrar <strong>{formatMoeda(dados.sobraProjetada)}</strong> até o fim do mês
+        </p>
+      ) : (
+        <>
+          <p className="tela-totais__frase">Nesse ritmo não vai sobrar nada esse mês</p>
+          <p className="tela-totais__frase">
+            Vai faltar: <strong>{formatMoeda(faltante)}</strong>
+          </p>
+          {carregandoEconomias ? (
+            <p className="tela-totais__frase">Economias atuais: carregando…</p>
+          ) : erroEconomias ? (
+            <p className="tela-totais__frase">Não foi possível carregar o saldo de Economias.</p>
+          ) : (
+            <>
+              <p className="tela-totais__frase">
+                Economias atuais: <strong>{formatMoeda(saldoEconomias)}</strong>
+              </p>
+              <p className="tela-totais__frase">
+                {diferencaReserva >= 0 ? (
+                  <>
+                    A reserva cobre esse mês, com <strong>{formatMoeda(diferencaReserva)}</strong> de sobra
+                  </>
+                ) : (
+                  <>
+                    Mesmo usando a reserva, ainda faltariam <strong>{formatMoeda(Math.abs(diferencaReserva))}</strong>
+                  </>
+                )}
+              </p>
+            </>
+          )}
+        </>
+      )}
 
       <h3 className="tela-totais__secao">Movimentações do mês</h3>
 
