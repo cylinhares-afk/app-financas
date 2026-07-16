@@ -211,7 +211,10 @@ export function TelaCategorias({ iniciarEmEdicao, aoCriarCategoria, onVoltar }: 
           <strong>{formatMoeda(resumo.totalGasto)}</strong>
         </div>
         <div className="tela-categorias__resumo-linha">
-          <span>Sobra</span>
+          <div className="tela-totais__rotulos">
+            <span>Diferença</span>
+            <span className="tela-totais__legenda">{resumo.sobra >= 0 ? 'diferença positiva' : 'diferença negativa'}</span>
+          </div>
           <strong className={resumo.sobra < 0 ? 'tela-categorias__valor--negativo' : ''}>
             {formatMoeda(resumo.sobra)}
           </strong>
