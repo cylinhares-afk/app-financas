@@ -46,7 +46,7 @@ export function TelaLancamento({
   const [cartaoId, setCartaoId] = useState('')
   const [valor, setValor] = useState('')
   const [data, setData] = useState(dataInicial || hojeISO())
-  const [meioPagamento, setMeioPagamento] = useState<MeioPagamento>('dinheiro')
+  const [meioPagamento, setMeioPagamento] = useState<MeioPagamento>('pix')
   const [descricao, setDescricao] = useState('')
 
   const [origemSelecionada, setOrigemSelecionada] = useState<(typeof ORIGENS_ENTRADA)[number]>(
@@ -440,7 +440,7 @@ export function TelaLancamento({
             value={meioPagamento}
             onChange={(evento) => setMeioPagamento(evento.target.value as MeioPagamento)}
           >
-            <option value="dinheiro">Dinheiro</option>
+            <option value="pix">PIX</option>
             <option value="cartao">Cartão</option>
           </select>
         </label>

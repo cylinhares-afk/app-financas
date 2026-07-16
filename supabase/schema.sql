@@ -60,7 +60,7 @@ create table if not exists recorrencias (
   categoria_id uuid references categorias (id) on delete restrict, -- só p/ saída
   usuario_id uuid not null references usuarios (id) on delete restrict,
   valor numeric(12, 2) not null,
-  meio_pagamento text check (meio_pagamento in ('dinheiro', 'cartao')), -- só p/ saída
+  meio_pagamento text check (meio_pagamento in ('pix', 'cartao')), -- só p/ saída
   descricao text, -- origem da entrada, ex: "Salário Cynthia"
   frequencia text not null check (frequencia in ('diaria', 'semanal', 'mensal')),
   data_inicio date not null,
@@ -79,7 +79,7 @@ create table if not exists gastos (
   valor numeric(12, 2) not null,
   data date not null,
   descricao text, -- nota livre do lançamento (ex: "ração, areia, churu — compra grande do mês")
-  meio_pagamento text not null check (meio_pagamento in ('dinheiro', 'cartao')),
+  meio_pagamento text not null check (meio_pagamento in ('pix', 'cartao')),
   compra_parcelada_id uuid references compras_parceladas (id) on delete cascade,
   numero_parcela int,
   recorrencia_id uuid references recorrencias (id) on delete cascade,
@@ -261,7 +261,7 @@ alter table categorias add column if not exists ativa boolean not null default t
 -- Snapshot do fechamento/vencimento do cartão NO MOMENTO da compra — editar
 -- um cartão depois não pode mudar retroativamente em qual mês uma compra
 -- já lançada vence (ver src/features/cartoes/faturaCartao.ts). Nulo pra
--- gastos em dinheiro, ou lançados antes dessa coluna existir (nesse caso o
+-- gastos via pix, ou lançados antes dessa coluna existir (nesse caso o
 -- cálculo cai num fallback, ver faturaCartao.ts).
 alter table gastos add column if not exists cartao_dia_fechamento int;
 alter table gastos add column if not exists cartao_dia_vencimento int;

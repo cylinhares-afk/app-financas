@@ -6,8 +6,8 @@
  * ../cartoes/faturaCartao.ts) — não no mês da compra, nem numa suposição
  * fixa de "sempre o mês seguinte".
  *
- * performance   = entradas do mês − saídas em dinheiro do mês − cartão que vence nesse mês
- * custo de vida = saídas em dinheiro do mês + cartão que vence nesse mês
+ * performance   = entradas do mês − saídas via pix do mês − cartão que vence nesse mês
+ * custo de vida = saídas via pix do mês + cartão que vence nesse mês
  *
  * "Diário médio" mudou pra tela Categorias (lá é feito com a régua de
  * orçamento comprometido — ver calcularResumoCategorias). "Economizado"
@@ -16,7 +16,7 @@
 
 export interface DadosTotais {
   entradasMes: number
-  saidasDinheiroMes: number
+  saidasPixMes: number
   saidasTotalMes: number // informativo (todos os meios), pra lista de movimentações
   cartaoMesAtual: number // informativo, pra lista de movimentações
   cartaoVencendoNoMes: number // usado nos cálculos de caixa real
@@ -39,15 +39,15 @@ export interface ResultadoTotais {
  */
 export function calcularPerformance(
   entradasMes: number,
-  saidasDinheiroMes: number,
+  saidasPixMes: number,
   cartaoVencendoNoMes: number,
 ): number {
-  return entradasMes - saidasDinheiroMes - cartaoVencendoNoMes
+  return entradasMes - saidasPixMes - cartaoVencendoNoMes
 }
 
 export function calcularTotais(dados: DadosTotais): ResultadoTotais {
-  const custoDeVida = dados.saidasDinheiroMes + dados.cartaoVencendoNoMes
-  const performance = calcularPerformance(dados.entradasMes, dados.saidasDinheiroMes, dados.cartaoVencendoNoMes)
+  const custoDeVida = dados.saidasPixMes + dados.cartaoVencendoNoMes
+  const performance = calcularPerformance(dados.entradasMes, dados.saidasPixMes, dados.cartaoVencendoNoMes)
 
   return {
     performance,

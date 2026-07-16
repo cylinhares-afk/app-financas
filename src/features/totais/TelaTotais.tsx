@@ -8,7 +8,7 @@ const ANO_ATUAL = hoje.getFullYear()
 const MES_ATUAL = hoje.getMonth() + 1
 
 // "Performance" muda de nome conforme o mês navegado: em curso, já fechado
-// ou ainda por vir — a fórmula (entradas − saídas dinheiro − cartão do mês
+// ou ainda por vir — a fórmula (entradas − saídas pix − cartão do mês
 // anterior) é sempre a mesma, só a leitura temporal muda (ver
 // statusMesVisualizado).
 const ROTULO_SOBRA: Record<ReturnType<typeof statusMesVisualizado>, string> = {

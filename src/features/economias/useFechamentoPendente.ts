@@ -80,14 +80,14 @@ export function useFechamentoPendente(ativo: boolean) {
     }
 
     const entradasMes = entradasResp.dados.reduce((soma, entrada) => soma + entrada.valor, 0)
-    const saidasDinheiroMes = gastosResp.dados
-      .filter((gasto) => gasto.meioPagamento === 'dinheiro')
+    const saidasPixMes = gastosResp.dados
+      .filter((gasto) => gasto.meioPagamento === 'pix')
       .reduce((soma, gasto) => soma + gasto.valor, 0)
 
     setPendente({
       ano: mesAFechar.ano,
       mes: mesAFechar.mes,
-      performance: calcularPerformance(entradasMes, saidasDinheiroMes, cartaoVencendoNoMesResp.dados),
+      performance: calcularPerformance(entradasMes, saidasPixMes, cartaoVencendoNoMesResp.dados),
     })
     setCarregando(false)
   }

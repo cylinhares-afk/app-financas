@@ -58,8 +58,8 @@ describe('filtrarGastosCartaoVencendoNoMes', () => {
       gasto({ valor: 300, data: '2026-07-10', cartaoId: 'b' }),
       // cartão B: compra dia 20/jun (depois do fechamento dia 5) -> fecha jul, vence jul
       gasto({ valor: 50, data: '2026-06-20', cartaoId: 'b' }),
-      // gasto em dinheiro não entra nunca
-      gasto({ valor: 999, data: '2026-07-15', cartaoId: 'a', meioPagamento: 'dinheiro' }),
+      // gasto via pix não entra nunca
+      gasto({ valor: 999, data: '2026-07-15', cartaoId: 'a', meioPagamento: 'pix' }),
     ]
 
     const vencendoEmJulho = filtrarGastosCartaoVencendoNoMes(gastos, cartoesPorId, 2026, 7)

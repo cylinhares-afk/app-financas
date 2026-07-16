@@ -72,7 +72,7 @@ export async function gerarOcorrenciasRecorrentesPendentes(
         usuarioId: recorrencia.usuarioId,
         valor: recorrencia.valor,
         data: ocorrencia.data,
-        meioPagamento: recorrencia.meioPagamento as 'dinheiro' | 'cartao',
+        meioPagamento: recorrencia.meioPagamento as 'pix' | 'cartao',
         cartaoId: recorrencia.cartaoId,
         cartaoDiaFechamento: cartaoDaOcorrencia?.diaFechamento,
         cartaoDiaVencimento: cartaoDaOcorrencia?.diaVencimento,

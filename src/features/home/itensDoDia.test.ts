@@ -13,7 +13,7 @@ describe('itensDoDia', () => {
   it('filtro "entradas" só traz as entradas do dia, com a descrição como rótulo', () => {
     const linha = linhaComMovimentos(
       [{ id: 'e1', usuarioId: 'u', valor: 4500, data: '2026-07-04', descricao: 'Salário Cynthia' }],
-      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' }],
+      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' }],
     )
 
     const itens = itensDoDia(linha, 'entradas', categorias, [])
@@ -34,7 +34,7 @@ describe('itensDoDia', () => {
   it('filtro "saidas" traz os gastos com o nome da categoria resolvido', () => {
     const linha = linhaComMovimentos(
       [],
-      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' }],
+      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' }],
     )
 
     const itens = itensDoDia(linha, 'saidas', categorias, [])
@@ -47,7 +47,7 @@ describe('itensDoDia', () => {
         data: '2026-07-04',
         rotulo: 'Mercado',
         descricao: undefined,
-        meioPagamento: 'dinheiro',
+        meioPagamento: 'pix',
         categoriaId: 'mercado',
         parcela: undefined,
         compraParceladaId: undefined,
@@ -57,11 +57,11 @@ describe('itensDoDia', () => {
     ])
   })
 
-  it('filtro "cartao" traz só os gastos no cartão, ignorando os em dinheiro', () => {
+  it('filtro "cartao" traz só os gastos no cartão, ignorando os via pix', () => {
     const linha = linhaComMovimentos(
       [],
       [
-        { id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' },
+        { id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' },
         { id: 'g2', categoriaId: 'mercado', usuarioId: 'u', valor: 50, data: '2026-07-04', meioPagamento: 'cartao' },
       ],
     )
@@ -74,7 +74,7 @@ describe('itensDoDia', () => {
   it('filtro "todas" junta entradas e saídas do dia', () => {
     const linha = linhaComMovimentos(
       [{ id: 'e1', usuarioId: 'u', valor: 4500, data: '2026-07-04' }],
-      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' }],
+      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' }],
     )
 
     const itens = itensDoDia(linha, 'todas', categorias, [])
@@ -82,11 +82,11 @@ describe('itensDoDia', () => {
     expect(itens.map((i) => i.id)).toEqual(['e1', 'g1'])
   })
 
-  it('filtro "todas" traz entrada + saída em dinheiro + saída no cartão juntos, nenhum tipo fica de fora', () => {
+  it('filtro "todas" traz entrada + saída via pix + saída no cartão juntos, nenhum tipo fica de fora', () => {
     const linha = linhaComMovimentos(
       [{ id: 'e1', usuarioId: 'u', valor: 4500, data: '2026-07-04', descricao: 'Salário Cynthia' }],
       [
-        { id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' },
+        { id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' },
         { id: 'g2', categoriaId: 'mercado', usuarioId: 'u', valor: 50, data: '2026-07-04', meioPagamento: 'cartao' },
       ],
     )
@@ -108,7 +108,7 @@ describe('itensDoDia', () => {
           usuarioId: 'u',
           valor: 250,
           data: '2026-07-04',
-          meioPagamento: 'dinheiro',
+          meioPagamento: 'pix',
           descricao: 'ração, areia, churu — compra grande do mês',
         },
       ],
@@ -122,7 +122,7 @@ describe('itensDoDia', () => {
   it('não traz descrição quando o gasto não tem uma', () => {
     const linha = linhaComMovimentos(
       [],
-      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' }],
+      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' }],
     )
 
     const itens = itensDoDia(linha, 'saidas', categorias, [])
@@ -133,7 +133,7 @@ describe('itensDoDia', () => {
   it('filtro "diarios" nunca tem itens, mesmo com lançamentos no dia', () => {
     const linha = linhaComMovimentos(
       [{ id: 'e1', usuarioId: 'u', valor: 4500, data: '2026-07-04' }],
-      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' }],
+      [{ id: 'g1', categoriaId: 'mercado', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' }],
     )
 
     expect(itensDoDia(linha, 'diarios', categorias, [])).toEqual([])
@@ -211,7 +211,7 @@ describe('itensDoDia', () => {
   it('usa "Categoria removida" quando a categoria do gasto não existe mais na lista', () => {
     const linha = linhaComMovimentos(
       [],
-      [{ id: 'g1', categoriaId: 'inexistente', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'dinheiro' }],
+      [{ id: 'g1', categoriaId: 'inexistente', usuarioId: 'u', valor: 100, data: '2026-07-04', meioPagamento: 'pix' }],
     )
 
     const itens = itensDoDia(linha, 'saidas', categorias, [])

@@ -176,9 +176,9 @@ describe('getDiasNoMes', () => {
 
 describe('somarGastosCategoriaNoMes', () => {
   const gastos: Gasto[] = [
-    { id: '1', categoriaId: 'mercado', usuarioId: 'u1', valor: 100, data: '2026-07-02', meioPagamento: 'dinheiro' },
+    { id: '1', categoriaId: 'mercado', usuarioId: 'u1', valor: 100, data: '2026-07-02', meioPagamento: 'pix' },
     { id: '2', categoriaId: 'mercado', usuarioId: 'u1', valor: 50, data: '2026-07-10', meioPagamento: 'cartao' },
-    { id: '3', categoriaId: 'mercado', usuarioId: 'u2', valor: 999, data: '2026-06-15', meioPagamento: 'dinheiro' }, // mês diferente
+    { id: '3', categoriaId: 'mercado', usuarioId: 'u2', valor: 999, data: '2026-06-15', meioPagamento: 'pix' }, // mês diferente
     { id: '4', categoriaId: 'delivery', usuarioId: 'u1', valor: 30, data: '2026-07-05', meioPagamento: 'cartao' }, // categoria diferente
   ]
 

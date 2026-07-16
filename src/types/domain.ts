@@ -1,4 +1,4 @@
-export type MeioPagamento = 'dinheiro' | 'cartao'
+export type MeioPagamento = 'pix' | 'cartao'
 
 export interface Usuario {
   id: string

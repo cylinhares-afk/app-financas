@@ -3,7 +3,7 @@ import { calcularLinhasDoMes, calcularMesesAnteriores, proximoSaldoInicial } fro
 import type { CompraParcelada, Entrada, Gasto } from '../../types/domain'
 
 function gasto(parcial: Partial<Gasto> & Pick<Gasto, 'categoriaId' | 'valor' | 'data'>): Gasto {
-  return { id: 'g', usuarioId: 'u', meioPagamento: 'dinheiro', ...parcial }
+  return { id: 'g', usuarioId: 'u', meioPagamento: 'pix', ...parcial }
 }
 
 function entrada(parcial: Partial<Entrada> & Pick<Entrada, 'valor' | 'data'>): Entrada {
@@ -14,7 +14,7 @@ describe('calcularLinhasDoMes', () => {
   it('totais de entradas/saídas/cartão refletem só os movimentos daquele dia específico', () => {
     const entradas = [entrada({ valor: 9000, data: '2026-07-01' })]
     const gastos = [
-      gasto({ categoriaId: 'mercado', valor: 300, data: '2026-07-04', meioPagamento: 'dinheiro' }),
+      gasto({ categoriaId: 'mercado', valor: 300, data: '2026-07-04', meioPagamento: 'pix' }),
       gasto({ categoriaId: 'mercado', valor: 250, data: '2026-07-06', meioPagamento: 'cartao' }),
     ]
 
@@ -209,7 +209,7 @@ describe('calcularLinhasDoMes', () => {
         compraParceladaId: 'compra-1',
         numeroParcela: 1,
       }),
-      gasto({ categoriaId: 'mercado', valor: 50, data: '2026-07-06', meioPagamento: 'dinheiro' }),
+      gasto({ categoriaId: 'mercado', valor: 50, data: '2026-07-06', meioPagamento: 'pix' }),
     ]
 
     const linhas = calcularLinhasDoMes([], gastos, [], 2026, 7, '2026-07-31', comprasParceladas)
