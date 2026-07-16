@@ -1,4 +1,4 @@
-import { CreditCard, LogOut, Menu as MenuIcon, Plus, Users } from 'lucide-react'
+import { CreditCard, LogOut, Menu as MenuIcon, Plus, Upload, Users } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,10 +14,11 @@ interface HeaderProps {
   perfilNome: string
   onNovoLancamento: () => void
   onAbrirCartoes: () => void
+  onAbrirImportarCSV: () => void
   onTrocarPerfil: () => void
 }
 
-export function Header({ perfilNome, onNovoLancamento, onAbrirCartoes, onTrocarPerfil }: HeaderProps) {
+export function Header({ perfilNome, onNovoLancamento, onAbrirCartoes, onAbrirImportarCSV, onTrocarPerfil }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-end gap-2 border-b border-border bg-background/95 px-4 backdrop-blur md:justify-between md:px-6">
       <span className="hidden text-sm font-medium text-muted-foreground md:inline">Finanças</span>
@@ -38,6 +39,10 @@ export function Header({ perfilNome, onNovoLancamento, onAbrirCartoes, onTrocarP
             <DropdownMenuItem onClick={onAbrirCartoes}>
               <CreditCard />
               Cartões
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onAbrirImportarCSV}>
+              <Upload />
+              Importar CSV
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onTrocarPerfil}>
               <Users />

@@ -13,6 +13,7 @@ import { TelaEconomias } from './features/economias/TelaEconomias'
 import { ModalFechamentoMes } from './features/economias/ModalFechamentoMes'
 import { useFechamentoPendente } from './features/economias/useFechamentoPendente'
 import { TelaCartoes } from './features/cartoes/TelaCartoes'
+import { TelaImportarCSV } from './features/importacao/TelaImportarCSV'
 import { AppShell } from './components/layout/AppShell'
 import { hojeISO } from './lib/dataISO'
 import type { TipoMovimento } from './types/domain'
@@ -27,9 +28,10 @@ type OrigemEdicaoCategorias = 'lancamento' | null
 
 function App() {
   const [abaAtiva, setAbaAtiva] = useState<Aba>('home')
-  // Aba ativa antes de abrir Cartões pelo menu do Header — usada pra "voltar"
-  // pro lugar certo, já que Cartões não é um destino da navegação primária.
-  const [abaAntesDoCartoes, setAbaAntesDoCartoes] = useState<Aba>('home')
+  // Aba ativa antes de abrir Cartões ou Importar CSV pelo menu do Header —
+  // usada pra "voltar" pro lugar certo, já que nenhum dos dois é um destino
+  // da navegação primária.
+  const [abaAntesDoMenu, setAbaAntesDoMenu] = useState<Aba>('home')
   const { session, carregando: carregandoSessao } = useSession()
   const {
     usuarios,
@@ -80,8 +82,13 @@ function App() {
   }
 
   function abrirCartoes() {
-    setAbaAntesDoCartoes(abaAtiva)
+    setAbaAntesDoMenu(abaAtiva)
     setAbaAtiva('cartoes')
+  }
+
+  function abrirImportarCsv() {
+    setAbaAntesDoMenu(abaAtiva)
+    setAbaAtiva('importar-csv')
   }
 
   // Navegação manual pela nav primária sempre volta pro modo de visualização
@@ -114,6 +121,7 @@ function App() {
         perfilNome={perfilAtivo.nome}
         onNovoLancamento={abrirNovoLancamento}
         onAbrirCartoes={abrirCartoes}
+        onAbrirImportarCSV={abrirImportarCsv}
         onTrocarPerfil={limparPerfil}
       >
         {abaAtiva === 'home' && <TelaHome key={versaoHome} onDiaClicado={handleDiaClicadoNaHome} />}
@@ -160,7 +168,11 @@ function App() {
 
         {abaAtiva === 'economias' && <TelaEconomias />}
 
-        {abaAtiva === 'cartoes' && <TelaCartoes onVoltar={() => setAbaAtiva(abaAntesDoCartoes)} />}
+        {abaAtiva === 'cartoes' && <TelaCartoes onVoltar={() => setAbaAtiva(abaAntesDoMenu)} />}
+
+        {abaAtiva === 'importar-csv' && (
+          <TelaImportarCSV usuarioId={perfilAtivo.id} onVoltar={() => setAbaAtiva(abaAntesDoMenu)} />
+        )}
       </AppShell>
 
       {fechamento.pendente && (

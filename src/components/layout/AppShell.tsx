@@ -11,6 +11,7 @@ interface AppShellProps {
   perfilNome: string
   onNovoLancamento: () => void
   onAbrirCartoes: () => void
+  onAbrirImportarCSV: () => void
   onTrocarPerfil: () => void
   children: ReactNode
 }
@@ -21,6 +22,7 @@ export function AppShell({
   perfilNome,
   onNovoLancamento,
   onAbrirCartoes,
+  onAbrirImportarCSV,
   onTrocarPerfil,
   children,
 }: AppShellProps) {
@@ -33,6 +35,7 @@ export function AppShell({
           perfilNome={perfilNome}
           onNovoLancamento={onNovoLancamento}
           onAbrirCartoes={onAbrirCartoes}
+          onAbrirImportarCSV={onAbrirImportarCSV}
           onTrocarPerfil={onTrocarPerfil}
         />
 

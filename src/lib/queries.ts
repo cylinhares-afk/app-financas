@@ -170,6 +170,35 @@ export async function fetchGastosDoMes(
   return { dados, erro: error?.message ?? null }
 }
 
+export interface GastoParaComparacao {
+  data: string
+  valor: number
+  categoriaId: string
+  meioPagamento: MeioPagamento
+  descricao?: string
+}
+
+/** Só os campos usados pra detectar duplicata na importação de CSV (ver
+ * separarNovasEDuplicadas em csvImportacao.ts) — sem filtro de mês, porque
+ * a importação existe justamente pra migrar histórico, que pode ter
+ * qualquer data. */
+export async function fetchGastosParaVerificarDuplicatas(): Promise<{
+  dados: GastoParaComparacao[]
+  erro: string | null
+}> {
+  const { data, error } = await supabase.from('gastos').select('data, valor, categoria_id, meio_pagamento, descricao')
+
+  const dados: GastoParaComparacao[] = (data ?? []).map((linha) => ({
+    data: linha.data,
+    valor: Number(linha.valor),
+    categoriaId: linha.categoria_id,
+    meioPagamento: linha.meio_pagamento,
+    descricao: linha.descricao ?? undefined,
+  }))
+
+  return { dados, erro: error?.message ?? null }
+}
+
 export async function fetchComprasParceladas(): Promise<{
   dados: CompraParcelada[]
   erro: string | null
@@ -248,7 +277,7 @@ export interface NovoGasto {
   usuarioId: string
   valor: number
   data: string
-  meioPagamento: 'dinheiro' | 'cartao'
+  meioPagamento: 'pix' | 'cartao'
   cartaoId?: string
   // Snapshot do fechamento/vencimento do cartão selecionado, capturado pelo
   // chamador NO MOMENTO da criação — nunca recalculado depois (ver
