@@ -1,55 +1,26 @@
-.tela-categorias__resumo {
+.tela-analise__abas {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 4px 0 20px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.tela-categorias__resumo-linha {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 0;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-.tela-categorias__resumo-linha strong {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.tela-categorias__valor--negativo {
-  color: var(--icone-saida);
-}
-
-.tela-categorias__resumo-comparacao {
-  display: flex;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.tela-categorias__resumo-comparacao > div {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 10px 12px;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 16px;
   background: var(--bg);
   border-radius: 10px;
 }
 
-.tela-categorias__resumo-comparacao span {
-  font-size: 12px;
+.tela-analise__aba {
+  flex: 1;
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: none;
   color: var(--text-muted);
+  cursor: pointer;
 }
 
-.tela-categorias__resumo-comparacao strong {
-  font-size: 18px;
-  font-weight: 700;
+.tela-analise__aba--ativa {
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -806,10 +777,43 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  /* Deixa encolher e quebrar linha na legenda (que pode ser bem mais longa,
+     ex: "Diário") sem espremer o valor ao lado pra fora da linha. */
+  min-width: 0;
+  flex: 1;
 }
 
 .tela-totais__rotulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-weight: 600;
+  color: var(--text);
+}
+
+.tela-totais__info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tela-totais__info:hover {
+  color: var(--text);
+}
+
+.tela-totais__info-conteudo {
+  font-size: 13px;
+  line-height: 1.4;
   color: var(--text);
 }
 
@@ -821,6 +825,8 @@
 .tela-totais__linha strong {
   font-size: 18px;
   color: var(--text);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .tela-totais__valor--positivo {
@@ -880,10 +886,6 @@
 
 .tela-totais__icone--saida {
   background: var(--icone-saida);
-}
-
-.tela-totais__icone--diario {
-  background: var(--icone-diario);
 }
 
 .tela-totais__icone--cartao {

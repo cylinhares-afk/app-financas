@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useOrcamentoMensal } from './useOrcamentoMensal'
-import { calcularResumoCategorias } from './calculations'
 import { CategoriaCard } from './CategoriaCard'
-import { formatMoeda, semNegativo } from '../../lib/formatMoeda'
-import { mesAnterior, mesSeguinte, nomeDoMes } from '../../lib/navegacaoMes'
+import { semNegativo } from '../../lib/formatMoeda'
+import { nomeDoMes } from '../../lib/navegacaoMes'
 import type { MesAno } from '../../lib/navegacaoMes'
 import { resolverPrevisaoEfetiva } from './previsaoEfetiva'
 import { arquivarCategoria, atualizarCategoria, criarCategoria, definirPrevisaoMensal } from '../../lib/queries'
 import type { PrevisaoMensal } from '../../types/domain'
 
 interface TelaCategoriasProps {
+  mesVisualizado: MesAno
   // Quando true, a tela já abre no modo de edição do previsto — usado
   // quando se chega aqui com a intenção explícita de editar (Menu, ou o
   // atalho "+ nova categoria" do Registro), em vez do modo de visualização
@@ -19,15 +19,7 @@ interface TelaCategoriasProps {
   // Quando informado, veio do atalho "+ nova categoria" do Registro: ao criar
   // uma categoria com sucesso, volta automaticamente já com ela selecionada.
   aoCriarCategoria?: (categoriaId: string) => void
-  // Só existe (e só faz sentido mostrar um "← Voltar") quando aoCriarCategoria
-  // também existe — veio do Registro e precisa de um jeito de voltar pra lá
-  // mesmo sem ter criado uma categoria nova.
-  onVoltar?: () => void
 }
-
-const hoje = new Date()
-const ANO_ATUAL = hoje.getFullYear()
-const MES_ATUAL = hoje.getMonth() + 1
 
 function rotuloOrigem(efetiva: PrevisaoMensal | null, mesVisualizado: MesAno): string {
   if (!efetiva) return 'nunca definido'
@@ -35,10 +27,11 @@ function rotuloOrigem(efetiva: PrevisaoMensal | null, mesVisualizado: MesAno): s
   return `herdado de ${nomeDoMes(efetiva.ano, efetiva.mes)}`
 }
 
-export function TelaCategorias({ iniciarEmEdicao, aoCriarCategoria, onVoltar }: TelaCategoriasProps) {
-  const [mesVisualizado, setMesVisualizado] = useState<MesAno>({ ano: ANO_ATUAL, mes: MES_ATUAL })
-  const { categorias, todasPrevisoes, orcamento, diasNoMes, diaAtual, carregando, erro, recarregar } =
-    useOrcamentoMensal(mesVisualizado.ano, mesVisualizado.mes)
+export function TelaCategorias({ mesVisualizado, iniciarEmEdicao, aoCriarCategoria }: TelaCategoriasProps) {
+  const { categorias, todasPrevisoes, orcamento, diasNoMes, carregando, erro, recarregar } = useOrcamentoMensal(
+    mesVisualizado.ano,
+    mesVisualizado.mes,
+  )
 
   const [modoEdicao, setModoEdicao] = useState(Boolean(iniciarEmEdicao))
   const [valores, setValores] = useState<Record<string, string>>({})
@@ -161,76 +154,8 @@ export function TelaCategorias({ iniciarEmEdicao, aoCriarCategoria, onVoltar }: 
 
   if (erro) return <p className="tela-categorias__aviso">Erro ao carregar categorias: {erro}</p>
 
-  const resumo = calcularResumoCategorias(orcamento.porCategoria, diaAtual)
-  const jaEstaNoMesAtual = mesVisualizado.ano === ANO_ATUAL && mesVisualizado.mes === MES_ATUAL
-
   return (
     <div className="tela-categorias">
-      {onVoltar && (
-        <button type="button" className="tela-previsao__voltar" onClick={onVoltar}>
-          ← Voltar
-        </button>
-      )}
-
-      <div className="tela-home__cabecalho">
-        <div className="tela-home__navegacao-mes">
-          <button
-            type="button"
-            className="tela-home__seta"
-            onClick={() => setMesVisualizado(mesAnterior(mesVisualizado))}
-            aria-label="Mês anterior"
-          >
-            ‹
-          </button>
-          <span>{nomeDoMes(mesVisualizado.ano, mesVisualizado.mes)}</span>
-          <button
-            type="button"
-            className="tela-home__seta"
-            onClick={() => setMesVisualizado(mesSeguinte(mesVisualizado))}
-            aria-label="Próximo mês"
-          >
-            ›
-          </button>
-        </div>
-        <button
-          type="button"
-          className={`tela-home__hoje ${jaEstaNoMesAtual ? 'tela-home__hoje--atual' : ''}`}
-          onClick={() => setMesVisualizado({ ano: ANO_ATUAL, mes: MES_ATUAL })}
-        >
-          Hoje
-        </button>
-      </div>
-
-      <div className="tela-categorias__resumo">
-        <div className="tela-categorias__resumo-linha">
-          <span>Total previsto</span>
-          <strong>{formatMoeda(resumo.totalPrevisto)}</strong>
-        </div>
-        <div className="tela-categorias__resumo-linha">
-          <span>Total gasto até hoje</span>
-          <strong>{formatMoeda(resumo.totalGasto)}</strong>
-        </div>
-        <div className="tela-categorias__resumo-linha">
-          <div className="tela-totais__rotulos">
-            <span>Diferença</span>
-            <span className="tela-totais__legenda">{resumo.sobra >= 0 ? 'diferença positiva' : 'diferença negativa'}</span>
-          </div>
-          <strong className={resumo.sobra < 0 ? 'tela-categorias__valor--negativo' : ''}>
-            {formatMoeda(resumo.sobra)}
-          </strong>
-        </div>
-        <div className="tela-categorias__resumo-comparacao">
-          <div>
-            <span>Diário médio</span>
-            <strong>{formatMoeda(resumo.diarioMedio)}</strong>
-          </div>
-          <div>
-            <span>Diário previsto</span>
-            <strong>{formatMoeda(resumo.diarioPrevistoHoje)}</strong>
-          </div>
-        </div>
-      </div>
-
       {categorias.length === 0 && !modoEdicao ? (
         <div className="tela-categorias__vazio">
           <p>Nenhuma categoria cadastrada ainda.</p>

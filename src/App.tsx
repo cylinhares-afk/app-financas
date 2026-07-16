@@ -3,12 +3,11 @@ import { useSession } from './features/auth/useSession'
 import { LoginScreen } from './features/auth/LoginScreen'
 import { usePerfilAtivo } from './features/perfil/usePerfilAtivo'
 import { SeletorPerfil } from './features/perfil/SeletorPerfil'
-import { TelaCategorias } from './features/budget/TelaCategorias'
+import { TelaAnalise } from './features/analise/TelaAnalise'
 import { TelaLancamento } from './features/lancamento/TelaLancamento'
 import { gerarOcorrenciasRecorrentesPendentes } from './features/lancamento/gerarOcorrenciasRecorrentes'
 import { TelaHome } from './features/home/TelaHome'
 import type { FiltroHome } from './features/home/TelaHome'
-import { TelaTotais } from './features/totais/TelaTotais'
 import { TelaEconomias } from './features/economias/TelaEconomias'
 import { ModalFechamentoMes } from './features/economias/ModalFechamentoMes'
 import { useFechamentoPendente } from './features/economias/useFechamentoPendente'
@@ -109,9 +108,9 @@ function App() {
   }
 
   // O Registro fica montado (só escondido) enquanto o usuário está em
-  // Categorias via o atalho "+ nova categoria" — assim nada do que já foi
+  // Análise via o atalho "+ nova categoria" — assim nada do que já foi
   // digitado se perde.
-  const mostrarLancamentoEscondido = abaAtiva === 'categorias' && origemEdicaoCategorias === 'lancamento'
+  const mostrarLancamentoEscondido = abaAtiva === 'analise' && origemEdicaoCategorias === 'lancamento'
 
   return (
     <>
@@ -125,9 +124,9 @@ function App() {
         onTrocarPerfil={limparPerfil}
       >
         {abaAtiva === 'home' && <TelaHome key={versaoHome} onDiaClicado={handleDiaClicadoNaHome} />}
-        {abaAtiva === 'categorias' && (
-          <TelaCategorias
-            iniciarEmEdicao={origemEdicaoCategorias !== null}
+        {abaAtiva === 'analise' && (
+          <TelaAnalise
+            categoriasEmEdicao={origemEdicaoCategorias !== null}
             aoCriarCategoria={
               origemEdicaoCategorias === 'lancamento'
                 ? (id) => {
@@ -137,7 +136,7 @@ function App() {
                   }
                 : undefined
             }
-            onVoltar={
+            onVoltarParaLancamento={
               origemEdicaoCategorias === 'lancamento'
                 ? () => {
                     setOrigemEdicaoCategorias(null)
@@ -147,7 +146,6 @@ function App() {
             }
           />
         )}
-        {abaAtiva === 'totais' && <TelaTotais />}
 
         {(abaAtiva === 'lancamento' || mostrarLancamentoEscondido) && (
           <div hidden={abaAtiva !== 'lancamento'}>
@@ -160,7 +158,7 @@ function App() {
               onEditarPrevisao={() => {
                 setOrigemEdicaoCategorias('lancamento')
                 setCategoriaParaSelecionar(null)
-                setAbaAtiva('categorias')
+                setAbaAtiva('analise')
               }}
             />
           </div>
