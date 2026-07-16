@@ -4,6 +4,7 @@ import {
   calcularOrcamentoDiarioTotal,
   calcularResumoCategorias,
   getDiasNoMes,
+  ordenarPorVariacao,
   somarGastosCategoriaNoMes,
 } from './calculations'
 import type { Gasto } from '../../types/domain'
@@ -162,6 +163,59 @@ describe('calcularResumoCategorias', () => {
 
     const resumo = calcularResumoCategorias(porCategoria, 1)
     expect(resumo.diarioMedio).toBe(100)
+  })
+})
+
+describe('ordenarPorVariacao', () => {
+  it('ordena por maior desvio absoluto entre gasto e previsto primeiro', () => {
+    const { porCategoria } = calcularOrcamentoDiarioTotal(
+      [
+        { categoriaId: 'mercado', previsto: 800, gastoNoMes: 850 }, // desvio 50
+        { categoriaId: 'lazer', previsto: 200, gastoNoMes: 700 }, // desvio 500 (estourou)
+        { categoriaId: 'transporte', previsto: 300, gastoNoMes: 290 }, // desvio 10
+      ],
+      15,
+      30,
+    )
+
+    const ordenado = ordenarPorVariacao(porCategoria)
+
+    expect(ordenado.map((c) => c.categoriaId)).toEqual(['lazer', 'mercado', 'transporte'])
+  })
+
+  it('categoria com grande folga (gastou bem menos que o previsto) também conta como desvio grande', () => {
+    const { porCategoria } = calcularOrcamentoDiarioTotal(
+      [
+        { categoriaId: 'mercado', previsto: 800, gastoNoMes: 780 }, // desvio 20
+        { categoriaId: 'viagem', previsto: 2000, gastoNoMes: 100 }, // desvio 1900 (folga grande)
+      ],
+      15,
+      30,
+    )
+
+    const ordenado = ordenarPorVariacao(porCategoria)
+
+    expect(ordenado[0].categoriaId).toBe('viagem')
+  })
+
+  it('não modifica a lista original (retorna uma cópia)', () => {
+    const { porCategoria } = calcularOrcamentoDiarioTotal(
+      [
+        { categoriaId: 'a', previsto: 100, gastoNoMes: 50 },
+        { categoriaId: 'b', previsto: 100, gastoNoMes: 900 },
+      ],
+      15,
+      30,
+    )
+    const original = [...porCategoria]
+
+    ordenarPorVariacao(porCategoria)
+
+    expect(porCategoria).toEqual(original)
+  })
+
+  it('lida com lista vazia', () => {
+    expect(ordenarPorVariacao([])).toEqual([])
   })
 })
 

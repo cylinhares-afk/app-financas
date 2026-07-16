@@ -78,6 +78,15 @@ export function calcularOrcamentoDiarioTotal(
   return { porCategoria, totalDiario }
 }
 
+/** Maior desvio absoluto entre gasto e previsto primeiro — pra chamar atenção
+ * pras categorias que mais fugiram do plano (estouradas ou com folga grande),
+ * sem tentar automatizar nenhuma leitura de "compensação" entre categorias. */
+export function ordenarPorVariacao(porCategoria: OrcamentoPorCategoria[]): OrcamentoPorCategoria[] {
+  return [...porCategoria].sort(
+    (a, b) => Math.abs(b.gastoNoMes - b.previsto) - Math.abs(a.gastoNoMes - a.previsto),
+  )
+}
+
 export interface ResumoCategorias {
   totalPrevisto: number
   totalGasto: number

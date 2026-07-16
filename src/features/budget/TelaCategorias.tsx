@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useOrcamentoMensal } from './useOrcamentoMensal'
+import { ordenarPorVariacao } from './calculations'
 import { CategoriaCard } from './CategoriaCard'
 import { semNegativo } from '../../lib/formatMoeda'
 import { nomeDoMes } from '../../lib/navegacaoMes'
@@ -288,9 +289,9 @@ export function TelaCategorias({ mesVisualizado, iniciarEmEdicao, aoCriarCategor
             </>
           ) : (
             <div className="tela-categorias__lista">
-              {categorias.map((categoria) => {
-                const resultado = orcamento.porCategoria.find((item) => item.categoriaId === categoria.id)
-                if (!resultado) return null
+              {ordenarPorVariacao(orcamento.porCategoria).map((resultado) => {
+                const categoria = categorias.find((item) => item.id === resultado.categoriaId)
+                if (!categoria) return null
                 return (
                   <CategoriaCard
                     key={categoria.id}
